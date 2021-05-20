@@ -10,19 +10,23 @@ const parseByLine = (byline: any) =>
     )
     .join(" ");
 const App = () => {
-  const [query, setQuery] = useState("cats");
-  const [section, setSection] = useState("news");
-  const [label, setLabel] = useState("");
-  const [topics, setTopics] = useState("");
-  const [byline, setByline] = useState("");
+  const [algolia, setAlgolia] = useState(localStorage.getItem("algolia") || "");
+
+  const [headline, setHeadline] = useState(
+    "If this was goodbye, Harry Kane went with a whimper"
+  );
+  const [section, setSection] = useState("sport");
+  const [label, setLabel] = useState("Premier League");
+  const [topics, setTopics] = useState("Premier League, Football");
+  const [byline, setByline] = useState("Alyson Rudd");
   const [results, setResults] = useState<any>();
 
   const handleSearchClick = async () => {
-    setResults(await search("", query, section, label, topics, byline));
+    setResults(await search("", headline, section, label, topics, byline));
   };
 
   useEffect(() => {
-    search("", query, section, label, topics, byline).then(setResults);
+    search("", headline, section, label, topics, byline).then(setResults);
   }, []);
 
   const handleArticleClick = async ({
@@ -33,12 +37,19 @@ const App = () => {
     topics,
     byline,
   }: any) => {
-    setQuery(headline ?? "");
+    setHeadline(headline ?? "");
     setSection(section ?? "");
     setLabel(label ?? "");
     setTopics(topics ?? "");
     setByline(byline ?? "");
     setResults(await search(id, headline, section, label, topics, byline));
+  };
+  const handleClearClick = async () => {
+    setHeadline("");
+    setSection("");
+    setLabel("");
+    setTopics("");
+    setByline("");
   };
 
   console.log(results);
@@ -46,8 +57,11 @@ const App = () => {
     <AppWrapper className="App">
       <div className="form">
         <div>
-          <span>Query</span>
-          <input value={query} onChange={(evt) => setQuery(evt.target.value)} />
+          <span>Headline</span>
+          <input
+            value={headline}
+            onChange={(evt) => setHeadline(evt.target.value)}
+          />
         </div>
         <div>
           <span>Section</span>
@@ -74,7 +88,10 @@ const App = () => {
             onChange={(evt) => setByline(evt.target.value)}
           />
         </div>
-        <button onClick={handleSearchClick}>Search</button>
+        <div className="buttons">
+          <button onClick={handleSearchClick}>Search</button>
+          <button onClick={handleClearClick}>Clear</button>
+        </div>
       </div>
       <ArticleWrapper>
         {results?.hits?.map(
@@ -137,6 +154,18 @@ const App = () => {
           )
         )}
       </ArticleWrapper>
+      <div className="form">
+        <div>
+          <span>AlgoliaKeys</span>
+          <input
+            value={algolia}
+            onChange={(evt) => {
+              localStorage.setItem("algolia", evt.target.value);
+              setAlgolia(evt.target.value);
+            }}
+          />
+        </div>
+      </div>
     </AppWrapper>
   );
 };

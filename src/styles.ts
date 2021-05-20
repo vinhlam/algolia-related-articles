@@ -22,9 +22,12 @@ export const AppWrapper = styled.div`
     input {
       width: 500px;
     }
-    button {
-      margin: 5px;
-      align-self: flex-end;
+    .buttons {
+      display: flex;
+      justify-content: flex-end;
+      button {
+        margin: 5px;
+      }
     }
   }
 `;

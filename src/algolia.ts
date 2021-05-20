@@ -1,33 +1,49 @@
 import algoliasearch from "algoliasearch";
-const config = process.env;
-
-const {
-  REACT_APP_APPLICATION_ID: applicationId,
-  REACT_APP_API_KEY: apiKey,
-  REACT_APP_INDEX_NAME: indexName,
-}: any = config;
-
-const index = algoliasearch(applicationId, apiKey).initIndex(indexName);
 
 export const search = async (
   id: string,
-  query: string,
+  headline: string,
   section: string,
   label: string,
   topics: string,
   byline: string
 ) => {
+  const app = (localStorage.getItem("algolia") || "").split(",");
+
+  if (app.length !== 3) return;
+
+  const [applicationId, apiKey, indexName] = app;
+
+  console.log(applicationId, apiKey, indexName);
+
+  if (!applicationId || !apiKey || !indexName) return;
+
+  const index = algoliasearch(applicationId, apiKey).initIndex(indexName);
+
   try {
     const topicArray =
-      topics?.split(", ").map((topic) => `topic:'${topic}'}`) ?? [];
+      topics?.split(", ").map((topic) => `topic.name:'${topic}'}`) ?? [];
+    const query = headline + (byline.length > 1 ? ' "' + byline + '"' : "");
 
-    return await index.search("", {
+    const optionalWords = headline
+      .split(" ")
+      .map((word) => word.trim())
+      .filter((word) => !word.match(/^[A-Z].*/));
+
+    console.log("optionalWords", optionalWords);
+
+    const filterSection = section !== "" ? `section:${section}` : undefined;
+    const filterId = id ? `NOT objectID:${id}` : undefined;
+    const filters = [filterSection, filterId].filter(Boolean).join(" AND ");
+    console.log("filters", filters);
+    return await index.search(query, {
       hitsPerPage: 9,
-      similarQuery: query + (byline.length > 1 ? " " + byline : ""),
       ignorePlurals: true,
       removeStopWords: true,
-      filters: id ? `NOT objectID:${id}` : undefined,
-      optionalFilters: [`section:${section}`, `label:${label}`, ...topicArray],
+      optionalWords: [...optionalWords, byline],
+      filters:
+        "algoliaData.publishedTimestamp >= " + new Date(2021, 4).getTime(),
+      optionalFilters: [`label:${label}`, ...topicArray],
     });
   } catch (e) {
     console.error(e);
