@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.js": "/algolia-related-articles/static/js/main.7817bcff.chunk.js",
+    "main.js.map": "/algolia-related-articles/static/js/main.7817bcff.chunk.js.map",
+    "runtime-main.js": "/algolia-related-articles/static/js/runtime-main.367ddc87.js",
+    "runtime-main.js.map": "/algolia-related-articles/static/js/runtime-main.367ddc87.js.map",
+    "static/js/2.9da2eb32.chunk.js": "/algolia-related-articles/static/js/2.9da2eb32.chunk.js",
+    "static/js/2.9da2eb32.chunk.js.map": "/algolia-related-articles/static/js/2.9da2eb32.chunk.js.map",
+    "index.html": "/algolia-related-articles/index.html",
+    "static/js/2.9da2eb32.chunk.js.LICENSE.txt": "/algolia-related-articles/static/js/2.9da2eb32.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.367ddc87.js",
+    "static/js/2.9da2eb32.chunk.js",
+    "static/js/main.7817bcff.chunk.js"
+  ]
+}
