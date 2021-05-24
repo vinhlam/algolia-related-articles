@@ -20,6 +20,7 @@ export const search = async (
 
   const index = algoliasearch(applicationId, apiKey).initIndex(indexName);
 
+  console.log("Settings", await index.getSettings());
   try {
     const topicArray =
       topics?.split(", ").map((topic) => `topic.name:'${topic}'}`) ?? [];
@@ -32,7 +33,7 @@ export const search = async (
 
     console.log("optionalWords", optionalWords);
 
-    const filterSection = section !== "" ? `section:${section}` : undefined;
+    const filterSection = section !== "" ? [`section:${section}`] : [];
     const filterId = id ? `NOT objectID:${id}` : undefined;
     const filters = [filterSection, filterId].filter(Boolean).join(" AND ");
     console.log("filters", filters);
@@ -41,9 +42,10 @@ export const search = async (
       ignorePlurals: true,
       removeStopWords: true,
       optionalWords: [...optionalWords, byline],
-      filters:
-        "algoliaData.publishedTimestamp >= " + new Date(2021, 4).getTime(),
-      optionalFilters: [`label:${label}`, ...topicArray],
+      filters: filterId,
+      // filters:
+      //   "algoliaData.publishedTimestamp >= " + new Date(2021, 4).getTime(),
+      optionalFilters: [`label:${label}`, ...filterSection, ...topicArray],
     });
   } catch (e) {
     console.error(e);
